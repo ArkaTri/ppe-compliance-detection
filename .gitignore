@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+dataset/
+eda_output/
+training_output/
+runs/
+*.pt
+.DS_Store
+.vscode/
