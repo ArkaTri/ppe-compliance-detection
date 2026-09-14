@@ -29,17 +29,18 @@ logger = logging.getLogger(__name__)
 
 
 def run_matrix(dataset_root: Path, project_dir: Path,
-               epochs: int, batch: int, device: str) -> List[TrainConfig]:
+               epochs: int, batch: int, device: str,
+               oversample: int = 3) -> List[TrainConfig]:
     """Definisi tiga run ablation."""
     common = dict(dataset_root=dataset_root, project_dir=project_dir,
                   epochs=epochs, batch=batch, device=device)
     return [
         TrainConfig(run_name="baseline_640", imgsz=640,
-                    aug_policy="compliant", oversample_factor=3, **common),
+                    aug_policy="compliant", oversample_factor=oversample, **common),
         TrainConfig(run_name="imgsz_960", imgsz=960,
-                    aug_policy="compliant", oversample_factor=3, **common),
+                    aug_policy="compliant", oversample_factor=oversample, **common),
         TrainConfig(run_name="mosaic_ablation", imgsz=640,
-                    aug_policy="mosaic_ablation", oversample_factor=3, **common),
+                    aug_policy="mosaic_ablation", oversample_factor=oversample, **common),
     ]
 
 

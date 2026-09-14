@@ -34,6 +34,8 @@ def parse_args() -> argparse.Namespace:
                    help="'all' atau nama run dipisah koma")
     p.add_argument("--epochs", type=int, default=100)
     p.add_argument("--batch", type=int, default=16)
+    p.add_argument("--oversample", type=int, default=3,
+                   help="Faktor pengulangan gambar kelas minoritas di train")
     p.add_argument("--device", default="")
     p.add_argument("--eval-split", default="test")
     p.add_argument("--eval-only", action="store_true",
@@ -55,6 +57,7 @@ def main() -> int:
         epochs=args.epochs,
         batch=args.batch,
         device=args.device,
+        oversample=args.oversample,
     )
 
     if args.runs.strip().lower() == "all":
