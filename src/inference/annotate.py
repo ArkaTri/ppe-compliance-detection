@@ -140,10 +140,12 @@ def _draw_summary(draw: ImageDraw.ImageDraw, report: Dict[str, object],
         f"Melanggar: {s.get('n_violation', 0)}  "
         f"Perlu tinjau: {s.get('n_needs_review', 0)}",
     ]
-    if s.get("assessable", 0):
+    if not s.get("rate_reliable", True):
+        lines.append("Tingkat kepatuhan tidak ditampilkan -")
+        lines.append("sebagian pekerja kemungkinan tidak terdeteksi")
+    elif s.get("assessable", 0):
         lines.append(f"Tingkat kepatuhan: {s['compliance_rate']:.0%} "
                      f"(dari {s['assessable']} yang dapat dinilai)")
-
     pad = 8
     lh = 16
     box_h = pad * 2 + lh * len(lines)
