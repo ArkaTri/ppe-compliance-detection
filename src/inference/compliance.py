@@ -242,6 +242,24 @@ def assess(workers: List[Worker], orphans: List[Detection],
             "Kemungkinan ada pekerja yang tidak terdeteksi."
         )
 
+    # Bila banyak APD tidak menemukan pemilik, kemungkinan besar ada pekerja
+    # yang tidak terdeteksi - dan tingkat kepatuhan menjadi menyesatkan karena
+    # dihitung dari sampel yang tidak mewakili seluruh pekerja di lokasi.
+    orphan_ratio = len(orphans) / max(n, 1)
+    summary["orphan_ratio"] = round(orphan_ratio, 2)
+    summary["rate_reliable"] = bool(n > 0 and orphan_ratio <= 0.5)
+    if not summary["rate_reliable"]:
+        summary["rate_warning"] = (
+            "Tingkat kepatuhan tidak dapat diandalkan: jumlah APD tanpa pemilik "
+            "sebanding atau melebihi jumlah pekerja terdeteksi. Kemungkinan "
+            "besar sebagian pekerja tidak terdeteksi, sehingga angka ini "
+            "dihitung dari sampel yang tidak mewakili lokasi."
+        )
+        summary["orphan_warning"] = (
+            f"{len(orphans)} box APD tidak menemukan pemilik. "
+            "Kemungkinan ada pekerja yang tidak terdeteksi."
+        )
+
     return {
         "workers": [r.to_dict() for r in results],
         "summary": summary,
