@@ -134,10 +134,14 @@ def _assess_absent(part: str, worker: Worker, all_persons: List[Detection],
             f"wilayah {part} tertutup pekerja lain - tidak dapat dinilai",
         )
 
-    return PartStatus(
-        VIOLATION_INFERRED,
-        f"tidak ada APD terdeteksi pada {part} sementara wilayahnya terlihat jelas",
-    )
+    reason = (f"tidak ada APD terdeteksi pada {part} sementara wilayahnya "
+              "terlihat jelas - kemungkinan pelanggaran, atau deteksi terlewat")
+
+    if cfg.path_b_mode == "violation":
+        return PartStatus(VIOLATION_INFERRED, reason)
+    if cfg.path_b_mode == "review":
+        return PartStatus(NEEDS_REVIEW, reason)
+    return PartStatus(NEEDS_REVIEW, f"tidak ada APD terdeteksi pada {part}")
 
 
 # --------------------------------------------------------------------------

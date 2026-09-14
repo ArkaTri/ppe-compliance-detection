@@ -65,6 +65,18 @@ class InferenceConfig:
     edge_margin: float = 0.02        # fraksi lebar/tinggi gambar
     occlusion_iou: float = 0.35      # tumpang tindih dengan person lain
 
+    # Mode jalur B (pelanggaran yang disimpulkan dari ketiadaan APD).
+    #   "violation" - vonis pelanggaran penuh
+    #   "review"    - ditandai untuk ditinjau manusia  <-- default
+    #   "off"       - abaikan sama sekali
+    #
+    # Default "review" ditetapkan dari hasil validasi terhadap ground truth
+    # pada test set: presisi jalur B hanya 0.31 (8 benar dari 26 tuduhan).
+    # 18 pekerja yang sebenarnya patuh akan dituduh melanggar - sebagian
+    # besar karena model gagal mendeteksi APD yang sebenarnya ada, bukan
+    # karena APD-nya memang tidak ada.
+    path_b_mode: str = "review"
+
     def __post_init__(self) -> None:
         self.weights = Path(self.weights)
 
