@@ -5,74 +5,74 @@
   "aug_policy": "compliant",
   "per_class": {
     "helmet": {
-      "recommended_threshold": 0.45,
+      "recommended_threshold": 0.4,
       "optimized_for": "f1",
-      "precision": 0.8556,
-      "recall": 0.8205,
-      "f1": 0.8377,
-      "f2": 0.8273,
+      "precision": 0.8454,
+      "recall": 0.841,
+      "f1": 0.8432,
+      "f2": 0.8419,
       "n_gt": 195,
       "recall_ci95": [
-        0.7634,
-        0.8767
+        0.7763,
+        0.9082
       ],
-      "ci_width": 0.1133
+      "ci_width": 0.1319
     },
     "no-helmet": {
       "recommended_threshold": 0.2,
       "optimized_for": "f2",
-      "precision": 0.5417,
+      "precision": 0.619,
       "recall": 0.5417,
-      "f1": 0.5417,
-      "f2": 0.5417,
+      "f1": 0.5778,
+      "f2": 0.5556,
       "n_gt": 24,
       "recall_ci95": [
-        0.2631,
-        0.7933
+        0.3333,
+        0.75
       ],
-      "ci_width": 0.5301
+      "ci_width": 0.4167
     },
     "no-vest": {
       "recommended_threshold": 0.2,
       "optimized_for": "f2",
-      "precision": 0.5946,
-      "recall": 0.7213,
-      "f1": 0.6519,
-      "f2": 0.6918,
+      "precision": 0.4174,
+      "recall": 0.7869,
+      "f1": 0.5455,
+      "f2": 0.6685,
       "n_gt": 61,
       "recall_ci95": [
-        0.5999,
-        0.84
+        0.6622,
+        0.8909
       ],
-      "ci_width": 0.2401
+      "ci_width": 0.2288
     },
     "person": {
-      "recommended_threshold": 0.5,
+      "recommended_threshold": 0.6,
       "optimized_for": "f1",
-      "precision": 0.8619,
-      "recall": 0.8458,
-      "f1": 0.8538,
-      "f2": 0.849,
+      "precision": 0.8599,
+      "recall": 0.8318,
+      "f1": 0.8456,
+      "f2": 0.8373,
       "n_gt": 214,
       "recall_ci95": [
-        0.7731,
-        0.914
+        0.7473,
+        0.9045
       ],
-      "ci_width": 0.1409
+      "ci_width": 0.1572
     },
     "vest": {
-      "recommended_threshold": 0.15,
+      "recommended_threshold": 0.4,
       "optimized_for": "f1",
-      "precision": 0.7172,
-      "recall": 0.8062,
-      "f1": 0.7591,
-      "f2": 0.7867,
+      "precision": 0.7661,
+      "recall": 0.7364,
+      "f1": 0.751,
+      "f2": 0.7422,
       "n_gt": 129,
       "recall_ci95": [
-        0.7365,
-        0.8713
+        0.6618,
+        0.8037
       ],
-      "ci_width": 0.1348
+      "ci_width": 0.142
     }
   }
 }
