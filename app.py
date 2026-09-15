@@ -84,6 +84,16 @@ if cfg.path_b_mode == "violation":
         "dan 0,36 untuk torso. Sebagian besar 'pelanggaran' yang dihasilkan "
         "sebenarnya adalah APD yang gagal terdeteksi.")
 
+st.sidebar.subheader("Deteksi kaskade")
+cfg.use_cascade = st.sidebar.checkbox(
+    "Aktifkan deteksi dua tahap", value=True,
+    help="Memotong tiap bbox pekerja lalu menjalankan detector lagi pada "
+         "potongan itu. Helm bermedian 62 px pada frame penuh menjadi ratusan "
+         "piksel di dalam potongan.")
+cfg.use_tta = st.sidebar.checkbox(
+    "Test-time augmentation", value=False,
+    help="Menaikkan recall, memperlambat proses sekitar 2,5x.")
+
 show_ppe = st.sidebar.checkbox("Tampilkan kotak APD", value=True)
 
 
@@ -128,21 +138,11 @@ c2.metric("Patuh", agg["n_compliant"])
 c3.metric("Melanggar", agg["n_violation"])
 c4.metric("Perlu tinjau", agg["n_needs_review"])
 
-unreliable = [r for r in reports if not r["summary"].get("rate_reliable", True)]
-
-if unreliable:
-    st.error(
-        f"Tingkat kepatuhan tidak ditampilkan: pada {len(unreliable)} gambar, "
-        "jumlah APD tanpa pemilik sebanding atau melebihi jumlah pekerja "
-        "terdeteksi. Sebagian pekerja kemungkinan tidak terdeteksi, sehingga "
-        "angka kepatuhan akan dihitung dari sampel yang tidak mewakili lokasi. "
-        "Turunkan ambang `person` di panel kiri, atau gunakan foto dengan "
-        "sudut pandang yang lebih longgar."
-    )
-elif agg["compliance_rate"] is not None:
+if agg["compliance_rate"] is not None:
     st.progress(agg["compliance_rate"],
                 text=f"Tingkat kepatuhan {agg['compliance_rate']:.0%} "
                      f"(dari {agg['assessable']} pekerja yang dapat dinilai)")
+
 st.caption(audit.summary_text(agg))
 
 st.divider()
@@ -175,6 +175,13 @@ for rep in reports:
         s = rep["summary"]
         if s.get("orphan_warning"):
             st.warning(s["orphan_warning"])
+
+        ds = rep.get("detection_stats", {})
+        if ds.get("cascade") and ds.get("n_recovered_by_cascade"):
+            st.success(
+                f"Deteksi kaskade menemukan {ds['n_recovered_by_cascade']} APD "
+                f"tambahan dari {ds['n_crops']} potongan pekerja - tidak "
+                "terdeteksi pada pemindaian gambar penuh.")
 
         with st.expander("Dasar keputusan"):
             for w in rep["workers"]:

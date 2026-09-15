@@ -171,6 +171,39 @@ def validate_image(image_path: Path, label_path: Path,
     return rows
 
 
+def compare_modes(dataset_root: Path, split: str, class_names: List[str],
+                  cfg: InferenceConfig, limit: Optional[int] = None) -> Dict[str, object]:
+    """
+    Jalankan validasi dengan kaskade MATI lalu HIDUP, pada konfigurasi lain
+    yang identik.
+
+    Perbandingan berpasangan seperti ini yang membuat klaim perbaikan dapat
+    dipertanggungjawabkan - bukan membandingkan dua angka dari dua percobaan
+    yang berbeda banyak hal.
+    """
+    import copy
+    out: Dict[str, object] = {}
+    for label, flag in (("tanpa_kaskade", False), ("dengan_kaskade", True)):
+        c = copy.deepcopy(cfg)
+        c.use_cascade = flag
+        out[label] = validate_split(dataset_root, split, class_names, c, limit)
+    a, b = out["tanpa_kaskade"], out["dengan_kaskade"]
+    out["delta"] = {
+        "path_a_precision": _delta(a["path_a"]["precision"], b["path_a"]["precision"]),
+        "violation_recall": _delta(a["violation_recall"]["path_a_only"],
+                                   b["violation_recall"]["path_a_only"]),
+        "compliant_precision": _delta(a["compliant_precision"], b["compliant_precision"]),
+        "needs_review_rate": _delta(a["needs_review_rate"], b["needs_review_rate"]),
+    }
+    return out
+
+
+def _delta(before, after):
+    if before is None or after is None:
+        return None
+    return {"sebelum": before, "sesudah": after, "selisih": round(after - before, 4)}
+
+
 def validate_split(dataset_root: Path, split: str, class_names: List[str],
                    cfg: InferenceConfig, limit: Optional[int] = None) -> Dict[str, object]:
     """Jalankan validasi pada seluruh gambar dalam satu split."""

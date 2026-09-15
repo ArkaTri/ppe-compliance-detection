@@ -57,7 +57,11 @@ class InferenceConfig:
     # Dipakai sebagai PENAMBAH SKOR, bukan filter keras - 3.7% vest berada
     # di luar zona, terutama pada postur jongkok/membungkuk.
     head_zone: tuple = (0.00, 0.40)
-    torso_zone: tuple = (0.20, 0.75)
+    # Batas torso diperlebar dari (0.20, 0.75) berdasarkan temuan EDA:
+    # persentil 95 posisi vertikal `no-vest` adalah 0.742, sehingga batas
+    # lama memotong tepat di ekor distribusi - pekerja membungkuk atau
+    # jongkok jatuh di luar zona dan berakhir sebagai PERLU TINJAU.
+    torso_zone: tuple = (0.15, 0.85)
     zone_bonus: float = 0.15
 
     # Ambang untuk memutuskan VIOLATION* vs NEEDS_REVIEW ketika tidak ada
@@ -76,6 +80,22 @@ class InferenceConfig:
     # besar karena model gagal mendeteksi APD yang sebenarnya ada, bukan
     # karena APD-nya memang tidak ada.
     path_b_mode: str = "review"
+
+    # -- deteksi kaskade dua tahap ---------------------------------------
+    # Tahap 2 memotong tiap bbox person lalu menjalankan detector yang sama
+    # pada potongan itu. Helm bermedian 62 px pada frame 960 menjadi ratusan
+    # piksel di dalam potongan - peningkatan resolusi efektif 5-8x pada kelas
+    # yang paling membutuhkannya.
+    use_cascade: bool = True
+    crop_imgsz: int = 640          # potongan tidak perlu 960; sudah diperbesar
+    crop_pad: float = 0.12         # bbox person kerap memotong tepat di helm
+    min_crop_size: int = 64        # potongan terlalu kecil hanya jadi artefak
+    skip_crop_ratio: float = 0.85  # pekerja yang sudah memenuhi frame dilewati
+    max_crops: int = 12            # batas waktu proses pada gambar kerumunan
+    merge_iou: float = 0.55        # ambang NMS antar grup eksklusif
+
+    # Test-time augmentation. Menaikkan recall dengan biaya waktu ~2.5x.
+    use_tta: bool = False
 
     def __post_init__(self) -> None:
         self.weights = Path(self.weights)

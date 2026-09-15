@@ -32,7 +32,7 @@ def load_model(cfg: InferenceConfig):
     return _MODEL_CACHE[key]
 
 
-def detect(image, cfg: InferenceConfig, model=None) -> List[Detection]:
+def detect(image, cfg: InferenceConfig, model=None):
     """
     Jalankan detector pada satu gambar (path atau array RGB).
 
@@ -42,21 +42,17 @@ def detect(image, cfg: InferenceConfig, model=None) -> List[Detection]:
     satu nilai conf global.
     """
     model = model or load_model(cfg)
-    result = model(image, imgsz=cfg.imgsz, conf=cfg.min_threshold,
-                   device=cfg.device, verbose=False)[0]
 
-    names = result.names
-    out: List[Detection] = []
-    if result.boxes is not None and len(result.boxes) > 0:
-        xyxy = result.boxes.xyxy.cpu().numpy()
-        cls = result.boxes.cls.cpu().numpy().astype(int)
-        conf = result.boxes.conf.cpu().numpy()
-        for b, c, f in zip(xyxy, cls, conf):
-            out.append(Detection(class_name=names[int(c)],
-                                 confidence=float(f),
-                                 xyxy=(float(b[0]), float(b[1]),
-                                       float(b[2]), float(b[3]))))
-    return out
+    if isinstance(image, (str, Path)):
+        from PIL import Image
+        arr = np.asarray(Image.open(image).convert("RGB"))
+    elif hasattr(image, "convert"):
+        arr = np.asarray(image.convert("RGB"))
+    else:
+        arr = np.asarray(image)
+
+    from .cascade import detect_cascade
+    return detect_cascade(arr, cfg, model)
 
 
 def analyze(image, cfg: InferenceConfig, model=None,
@@ -71,7 +67,7 @@ def analyze(image, cfg: InferenceConfig, model=None,
         arr = np.asarray(image)
         img_h, img_w = arr.shape[:2]
 
-    detections = detect(image, cfg, model=model)
+    detections, det_stats = detect(image, cfg, model=model)
     workers, orphans = associate(detections, cfg)
     report = assess(workers, orphans, img_w, img_h, cfg)
 
@@ -80,4 +76,5 @@ def analyze(image, cfg: InferenceConfig, model=None,
     report["_workers"] = workers      # untuk anotasi
     report["_orphans"] = orphans
     report["_detections"] = detections
+    report["detection_stats"] = det_stats
     return report
