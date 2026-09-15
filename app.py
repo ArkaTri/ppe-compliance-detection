@@ -92,8 +92,9 @@ cfg.use_cascade = st.sidebar.checkbox(
          "piksel di dalam potongan.")
 cfg.use_tta = st.sidebar.checkbox(
     "Test-time augmentation", value=False,
-    help="Menaikkan recall, memperlambat proses sekitar 2,5x.")
-
+    help="Recall pelanggaran naik dari 87% ke 90% dan deteksi pekerja "
+         "bertambah, tetapi presisi vonis pelanggaran turun 4 poin dan "
+         "waktu proses naik sekitar 4x (~5 detik untuk gambar padat).")
 show_ppe = st.sidebar.checkbox("Tampilkan kotak APD", value=True)
 
 
