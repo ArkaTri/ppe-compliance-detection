@@ -57,11 +57,12 @@ class InferenceConfig:
     # Dipakai sebagai PENAMBAH SKOR, bukan filter keras - 3.7% vest berada
     # di luar zona, terutama pada postur jongkok/membungkuk.
     head_zone: tuple = (0.00, 0.40)
-    # Batas torso diperlebar dari (0.20, 0.75) berdasarkan temuan EDA:
-    # persentil 95 posisi vertikal `no-vest` adalah 0.742, sehingga batas
-    # lama memotong tepat di ekor distribusi - pekerja membungkuk atau
-    # jongkok jatuh di luar zona dan berakhir sebagai PERLU TINJAU.
-    torso_zone: tuple = (0.15, 0.85)
+    # Pelebaran ke (0.15, 0.85) sempat dicoba berdasarkan p95 posisi vertikal
+    # `no-vest` (0.742) di EDA. Hasil validasi menolaknya: presisi vonis
+    # pelanggaran turun dari 0.893 ke 0.643. Zona yang lebih lebar membuat
+    # box `no-vest` di bagian bawah tubuh ikut mendapat bonus skor dan
+    # mengalahkan box `vest` yang benar dalam penugasan greedy.
+    torso_zone: tuple = (0.20, 0.75)
     zone_bonus: float = 0.15
 
     # Ambang untuk memutuskan VIOLATION* vs NEEDS_REVIEW ketika tidak ada
