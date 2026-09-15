@@ -92,9 +92,8 @@ cfg.use_cascade = st.sidebar.checkbox(
          "piksel di dalam potongan.")
 cfg.use_tta = st.sidebar.checkbox(
     "Test-time augmentation", value=False,
-    help="Recall pelanggaran naik dari 87% ke 90% dan deteksi pekerja "
-         "bertambah, tetapi presisi vonis pelanggaran turun 4 poin dan "
-         "waktu proses naik sekitar 4x (~5 detik untuk gambar padat).")
+    help="Menaikkan recall, memperlambat proses sekitar 2,5x.")
+
 show_ppe = st.sidebar.checkbox("Tampilkan kotak APD", value=True)
 
 
@@ -174,6 +173,11 @@ for rep in reports:
             st.warning("Tidak ada pekerja terdeteksi pada gambar ini.")
 
         s = rep["summary"]
+
+        dom = rep.get("domain", {})
+        if dom.get("out_of_domain_suspected"):
+            st.error(dom["warning"])
+
         if s.get("orphan_warning"):
             st.warning(s["orphan_warning"])
 

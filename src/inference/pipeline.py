@@ -77,4 +77,10 @@ def analyze(image, cfg: InferenceConfig, model=None,
     report["_orphans"] = orphans
     report["_detections"] = detections
     report["detection_stats"] = det_stats
+
+    # Penilaian ketidaksesuaian domain - tidak mengubah vonis per pekerja,
+    # hanya menambahkan konteks bila gambar tampak di luar wilayah latih.
+    from .domain_check import assess_domain
+    report["domain"] = assess_domain(report)
+
     return report

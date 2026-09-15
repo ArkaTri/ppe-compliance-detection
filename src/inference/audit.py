@@ -26,7 +26,7 @@ FIELDS = [
     "timestamp", "image_id", "worker_index", "overall_status",
     "head_status", "head_evidence", "head_confidence", "head_reason",
     "torso_status", "torso_evidence", "torso_confidence", "torso_reason",
-    "person_confidence", "bbox", "notes",
+    "person_confidence", "bbox", "notes", "domain_flag",
 ]
 
 
@@ -35,6 +35,13 @@ def records_from_report(report: Dict[str, object],
     """Ubah satu laporan gambar menjadi baris-baris audit per pekerja."""
     ts = timestamp or datetime.now().isoformat(timespec="seconds")
     image_id = report.get("image_id", "unknown")
+
+    # Bila gambar diragukan berada di luar domain, setiap baris audit
+    # membawa penanda itu - pembaca laporan harus tahu tanpa perlu
+    # membuka kembali gambarnya.
+    from .domain_check import summary_line
+    domain_flag = summary_line(report.get("domain", {}))
+
     rows: List[dict] = []
 
     for w in report.get("workers", []):
@@ -46,15 +53,16 @@ def records_from_report(report: Dict[str, object],
             "overall_status": w["overall"],
             "head_status": head["status"],
             "head_evidence": head.get("evidence") or "",
-            "head_confidence": head.get("confidence"),
+            "head_confidence": head.get("confidence") or "",
             "head_reason": head["reason"],
             "torso_status": torso["status"],
             "torso_evidence": torso.get("evidence") or "",
-            "torso_confidence": torso.get("confidence"),
+            "torso_confidence": torso.get("confidence") or "",
             "torso_reason": torso["reason"],
             "person_confidence": w["person_confidence"],
             "bbox": " ".join(str(v) for v in w["bbox"]),
             "notes": "; ".join(w.get("notes", [])),
+            "domain_flag": domain_flag,
         })
     return rows
 
