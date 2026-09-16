@@ -92,7 +92,9 @@ cfg.use_cascade = st.sidebar.checkbox(
          "piksel di dalam potongan.")
 cfg.use_tta = st.sidebar.checkbox(
     "Test-time augmentation", value=False,
-    help="Menaikkan recall, memperlambat proses sekitar 2,5x.")
+    help="Recall pelanggaran naik dari 87% ke 90% dan deteksi pekerja "
+         "bertambah, tetapi presisi vonis pelanggaran turun 4 poin dan "
+         "waktu proses naik sekitar 4x (~5 detik untuk gambar padat).")
 
 show_ppe = st.sidebar.checkbox("Tampilkan kotak APD", value=True)
 
@@ -138,10 +140,31 @@ c2.metric("Patuh", agg["n_compliant"])
 c3.metric("Melanggar", agg["n_violation"])
 c4.metric("Perlu tinjau", agg["n_needs_review"])
 
-if agg["compliance_rate"] is not None:
+unreliable = [r for r in reports
+              if not r["summary"].get("rate_reliable", True)]
+
+if unreliable:
+    st.error(
+        f"Tingkat kepatuhan tidak ditampilkan: pada {len(unreliable)} gambar, "
+        "jumlah APD tanpa pemilik sebanding atau melebihi jumlah pekerja "
+        "terdeteksi. Sebagian pekerja kemungkinan tidak terdeteksi, sehingga "
+        "angka kepatuhan akan dihitung dari sampel yang tidak mewakili lokasi. "
+        "Turunkan ambang `person` di panel kiri, atau gunakan foto dengan "
+        "sudut pandang yang lebih longgar."
+    )
+elif agg["compliance_rate"] is not None:
     st.progress(agg["compliance_rate"],
                 text=f"Tingkat kepatuhan {agg['compliance_rate']:.0%} "
                      f"(dari {agg['assessable']} pekerja yang dapat dinilai)")
+
+n_ood = sum(1 for r in reports
+            if r.get("domain", {}).get("out_of_domain_suspected"))
+if n_ood:
+    st.warning(
+        f"{n_ood} dari {len(reports)} gambar ditandai kemungkinan di luar "
+        "domain model. Angka kepatuhan agregat di atas mencakup gambar "
+        "tersebut dan perlu dibaca dengan hati-hati."
+    )
 
 st.caption(audit.summary_text(agg))
 
