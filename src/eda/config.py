@@ -71,6 +71,11 @@ class EDAConfig:
     class_names: List[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        """
+    Dijalankan otomatis setelah EDAConfig dibuat: pastikan path bertipe Path,
+    siapkan folder output, dan muat daftar nama kelas dari data.yaml jika
+    belum diisi manual.
+    """
         self.dataset_root = Path(self.dataset_root)
         self.output_dir = Path(self.output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -81,6 +86,7 @@ class EDAConfig:
             self.class_names = self._load_class_names()
 
     def _load_class_names(self) -> List[str]:
+        """Baca daftar nama kelas dari data.yaml milik dataset YOLO."""
         yaml_path = self.dataset_root / "data.yaml"
         if not yaml_path.exists():
             raise FileNotFoundError(
@@ -98,6 +104,7 @@ class EDAConfig:
     def images_dir(self, split: str) -> Path:
         return self.dataset_root / split / "images"
 
+    # Path folder label (.txt) untuk satu split, pasangan dari images_dir().
     def labels_dir(self, split: str) -> Path:
         return self.dataset_root / split / "labels"
 

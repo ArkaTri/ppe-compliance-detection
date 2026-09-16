@@ -115,6 +115,10 @@ def _decisions(dist: dict, geom: dict, assoc: dict) -> list:
 
 def build_markdown(cfg: EDAConfig, integ: dict, dist: dict, geom: dict,
                    assoc: dict, figures: dict) -> str:
+    """
+    Rangkai semua hasil analisis (integrity, distribution, geometry,
+    association) menjadi satu laporan Markdown siap dibaca manusia.
+    """
     L = []
     A = L.append
 
@@ -259,6 +263,10 @@ def build_markdown(cfg: EDAConfig, integ: dict, dist: dict, geom: dict,
 
 def run(cfg: EDAConfig, integ: dict, dist: dict, geom: dict,
         assoc: dict, figures: dict) -> Dict[str, str]:
+    """
+    Titik masuk modul report: tulis hasil EDA ke dua format sekaligus —
+    eda_report.json (mesin-terbaca) dan eda_report.md (manusia-terbaca).
+    """
     payload = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "dataset_root": str(cfg.dataset_root),

@@ -40,6 +40,11 @@ st.set_page_config(page_title="Pemeriksa Kepatuhan APD",
 
 @st.cache_resource(show_spinner="Memuat model ...")
 def get_config_and_model(imgsz: int):
+    """
+    Muat model & config sekali saja per nilai imgsz, lalu simpan di cache Streamlit.
+    Tanpa @st.cache_resource, model YOLO akan di-load ulang dari disk setiap kali
+    pengguna berinteraksi dengan UI (tiap klik = reload beberapa detik).
+    """
     cfg = InferenceConfig.from_evaluation(
         weights=WEIGHTS, eval_json=EVAL_JSON, imgsz=imgsz, device="cpu")
     model = load_model(cfg)

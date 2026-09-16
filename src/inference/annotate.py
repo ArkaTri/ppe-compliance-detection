@@ -45,6 +45,10 @@ PPE_COLOR = (148, 163, 184)  # abu-abu; APD sekadar bukti pendukung
 
 
 def _font(size: int) -> ImageFont.ImageFont:
+    """
+    Cari font Bold yang tersedia di sistem (Linux/Mac berbeda path-nya).
+    Jika tidak ada satu pun ditemukan, jatuh ke font default Pillow.
+    """
     for path in (
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",

@@ -90,6 +90,10 @@ class TrainConfig:
     class_names: List[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        """
+    Validasi aug_policy yang dipilih, siapkan folder project, dan muat nama
+    kelas dari data.yaml jika belum diisi.
+    """
         self.dataset_root = Path(self.dataset_root)
         self.project_dir = Path(self.project_dir)
         self.project_dir.mkdir(parents=True, exist_ok=True)
@@ -114,19 +118,27 @@ class TrainConfig:
     # -- helper -----------------------------------------------------------
     @property
     def augmentation(self) -> Dict[str, float]:
+        """Ambil dict parameter augmentasi sesuai aug_policy yang dipilih."""
         return dict(AUG_POLICIES[self.aug_policy])
 
     @property
+    # run_dir: folder output khusus run ini. best_weights: path bobot terbaik.
+    # class_id: konversi nama kelas -> index integer sesuai urutan di data.yaml.
     def run_dir(self) -> Path:
         return self.project_dir / self.run_name
 
     @property
+    # run_dir: folder output khusus run ini. best_weights: path bobot terbaik.
+    # class_id: konversi nama kelas -> index integer sesuai urutan di data.yaml.
     def best_weights(self) -> Path:
         return self.run_dir / "weights" / "best.pt"
 
     def class_id(self, name: str) -> int:
+    # run_dir: folder output khusus run ini. best_weights: path bobot terbaik.
+    # class_id: konversi nama kelas -> index integer sesuai urutan di data.yaml.
         return self.class_names.index(name)
 
+    # Ringkasan seluruh parameter training — disimpan sebagai bukti provenance run.
     def to_dict(self) -> dict:
         return {
             "run_name": self.run_name,

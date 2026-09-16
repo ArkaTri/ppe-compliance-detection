@@ -36,6 +36,7 @@ PALETTE = {
 
 
 def _save(fig: plt.Figure, path: Path) -> str:
+    """Helper bersama: simpan figure matplotlib ke PNG lalu tutup memori-nya."""
     fig.tight_layout()
     fig.savefig(path, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -44,6 +45,7 @@ def _save(fig: plt.Figure, path: Path) -> str:
 
 
 def plot_class_distribution(counts: pd.DataFrame, cfg: EDAConfig) -> str:
+    """Gambar satu figur EDA dan simpan ke folder figures/ untuk laporan."""
     split_cols = [c for c in counts.columns if c != "TOTAL"]
     fig, ax = plt.subplots(figsize=(9, 5))
     counts[split_cols].plot(kind="barh", stacked=True, ax=ax,
@@ -56,6 +58,7 @@ def plot_class_distribution(counts: pd.DataFrame, cfg: EDAConfig) -> str:
 
 
 def plot_size_distribution(size_dist: pd.DataFrame, cfg: EDAConfig) -> str:
+    """Gambar satu figur EDA dan simpan ke folder figures/ untuk laporan."""
     fig, ax = plt.subplots(figsize=(9, 5))
     cols = [c for c in ["small", "medium", "large"] if c in size_dist.columns]
     size_dist[cols].plot(kind="barh", stacked=True, ax=ax,
@@ -67,6 +70,7 @@ def plot_size_distribution(size_dist: pd.DataFrame, cfg: EDAConfig) -> str:
 
 
 def plot_area_boxplot(boxes_df: pd.DataFrame, cfg: EDAConfig) -> str:
+    """Gambar satu figur EDA dan simpan ke folder figures/ untuk laporan."""
     fig, ax = plt.subplots(figsize=(9, 5))
     order = boxes_df.groupby("class_name")["area_frac"].median().sort_values().index
     data = [boxes_df.loc[boxes_df["class_name"] == c, "area_frac"] for c in order]
@@ -95,6 +99,7 @@ def plot_area_boxplot(boxes_df: pd.DataFrame, cfg: EDAConfig) -> str:
 
 
 def plot_association_sensitivity(sensitivity: pd.DataFrame, cfg: EDAConfig) -> str:
+    """Gambar satu figur EDA dan simpan ke folder figures/ untuk laporan."""
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.plot(sensitivity["threshold"], sensitivity["attach_rate"],
             marker="o", label="Attach rate", color="#16a34a")
@@ -183,6 +188,10 @@ def render_annotated_samples(cfg: EDAConfig, images_df: pd.DataFrame,
 def run(cfg: EDAConfig, images_df: pd.DataFrame, boxes_df: pd.DataFrame,
         dist: dict, geom: dict, assoc: dict) -> Dict[str, object]:
     figures: Dict[str, object] = {}
+    """
+    Titik masuk modul visualize: panggil semua fungsi plot_* di atas dan
+    kumpulkan path hasilnya menjadi satu dict untuk disisipkan ke laporan.
+    """
 
     counts = dist.get("_counts_df")
     if counts is not None and not counts.empty:

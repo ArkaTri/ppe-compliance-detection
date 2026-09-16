@@ -21,6 +21,7 @@ from .config import EDAConfig, PPE_CLASSES
 
 
 def size_bucket(area_frac: float, cfg: EDAConfig) -> str:
+    """Klasifikasikan satu box ke small/medium/large berdasarkan ambang di config."""
     if area_frac < cfg.small_area_frac:
         return "small"
     if area_frac < cfg.medium_area_frac:
@@ -108,6 +109,10 @@ def imgsz_recommendation(size_dist: pd.DataFrame) -> Dict[str, object]:
 
 
 def run(cfg: EDAConfig, images_df: pd.DataFrame, boxes_df: pd.DataFrame) -> dict:
+    """
+    Titik masuk modul geometry: hitung semua statistik ukuran objek dan
+    kembalikan sebagai satu dict siap pakai untuk laporan.
+    """
     per_class = per_class_geometry(boxes_df)
     size_dist = size_distribution(boxes_df, cfg)
     return {

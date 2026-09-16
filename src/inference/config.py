@@ -99,6 +99,7 @@ class InferenceConfig:
     use_tta: bool = False
 
     def __post_init__(self) -> None:
+        """Pastikan path weights bertipe Path setelah InferenceConfig dibuat."""
         self.weights = Path(self.weights)
 
     # ------------------------------------------------------------------
@@ -124,6 +125,7 @@ class InferenceConfig:
         return cfg
 
     def threshold(self, class_name: str) -> float:
+        """Pastikan path weights bertipe Path setelah InferenceConfig dibuat."""
         return self.thresholds.get(class_name, 0.25)
 
     @property
@@ -131,6 +133,7 @@ class InferenceConfig:
         """Threshold terendah - dipakai sebagai conf saat memanggil model."""
         return min(self.thresholds.values())
 
+    # Ringkasan config dalam bentuk dict — dipakai untuk logging/audit run.
     def to_dict(self) -> dict:
         return {
             "weights": str(self.weights),

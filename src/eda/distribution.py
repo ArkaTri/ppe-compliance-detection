@@ -111,6 +111,10 @@ def violation_summary(counts: pd.DataFrame, cfg: EDAConfig) -> Dict[str, object]
     }
 
 def run(cfg: EDAConfig, images_df: pd.DataFrame, boxes_df: pd.DataFrame) -> dict:
+    """
+    Titik masuk modul distribution: jalankan seluruh analisis sebaran kelas
+    (count, imbalance, drift antar split, ko-okurensi, ringkasan pelanggaran).
+    """
     counts = class_counts(boxes_df)
     return {
         "class_counts": counts.to_dict() if not counts.empty else {},

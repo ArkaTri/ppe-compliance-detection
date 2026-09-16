@@ -23,6 +23,10 @@ from training.config import MINORITY_CLASSES   # noqa: E402
 
 
 def main() -> int:
+    """
+    Entry point CLI: baca argumen, tentukan kelas minoritas dari data.yaml,
+    lalu panggil `generate()` untuk menulis varian augmentasi ke disk.
+    """
     p = argparse.ArgumentParser(description="Augmentasi fotometrik offline")
     p.add_argument("--dataset-root", required=True)
     p.add_argument("--output-root", required=True)

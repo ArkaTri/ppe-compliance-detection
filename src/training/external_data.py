@@ -83,10 +83,12 @@ def dhash(path: Path, size: int = 8) -> Optional[int]:
 
 
 def hamming(a: int, b: int) -> int:
+    """Hitung jarak Hamming antar dua hash — makin kecil, makin mirip gambarnya."""
     return bin(a ^ b).count("1")
 
 
 def _hash_dir(img_dir: Path) -> Dict[Path, int]:
+    """Hitung perceptual hash untuk semua gambar dalam satu folder sekaligus."""
     out: Dict[Path, int] = {}
     if not img_dir.is_dir():
         return out

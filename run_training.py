@@ -27,6 +27,7 @@ from training import ablation, train as train_mod  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
+    """Definisikan dan baca argumen command-line untuk training & ablation."""
     p = argparse.ArgumentParser(description="Training & ablation PPE detection")
     p.add_argument("--dataset-root", required=True)
     p.add_argument("--project-dir", default="training_output")
@@ -45,6 +46,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """
+    Orchestrator training: bangun matriks konfigurasi ablation, jalankan run
+    yang dipilih (atau semua), evaluasi tiap run, lalu tulis laporan perbandingan.
+    """
     args = parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)-8s %(name)-20s %(message)s")

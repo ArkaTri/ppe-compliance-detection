@@ -28,6 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 def _environment() -> Dict[str, str]:
+    """
+    Catat versi Python, PyTorch, Ultralytics, dan info GPU saat training
+    dijalankan — bagian dari provenance agar hasil eksperimen bisa direproduksi.
+    """
     info = {"python": platform.python_version(), "platform": platform.platform()}
     try:
         import torch

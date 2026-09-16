@@ -55,6 +55,7 @@ def brightness(img: Image.Image, rng: random.Random) -> Image.Image:
 
 
 def contrast(img: Image.Image, rng: random.Random) -> Image.Image:
+    """Meniru kontras ekstrem antara area terbuka dan bayangan di lokasi konstruksi."""
     return ImageEnhance.Contrast(img).enhance(rng.uniform(0.55, 1.65))
 
 
@@ -135,6 +136,7 @@ def apply_chain(img: Image.Image, rng: random.Random,
 # --------------------------------------------------------------------------
 
 def _classes_in_label(label_path: Path) -> Set[int]:
+    """Baca file label YOLO, kembalikan himpunan id kelas yang muncul di gambar itu."""
     if not label_path.exists():
         return set()
     ids: Set[int] = set()

@@ -100,6 +100,7 @@ def gt_part_status(worker, part: str) -> str:
 
 
 def iou(a: Tuple[float, ...], b: Tuple[float, ...]) -> float:
+    """IoU dua box — dipakai untuk mencocokkan pekerja hasil prediksi vs ground truth."""
     iw = min(a[2], b[2]) - max(a[0], b[0])
     ih = min(a[3], b[3]) - max(a[1], b[1])
     if iw <= 0 or ih <= 0:
@@ -199,6 +200,7 @@ def compare_modes(dataset_root: Path, split: str, class_names: List[str],
 
 
 def _delta(before, after):
+    """Bandingkan metrik sebelum/sesudah kaskade, untuk laporan compare_modes()."""
     if before is None or after is None:
         return None
     return {"sebelum": before, "sesudah": after, "selisih": round(after - before, 4)}
@@ -232,10 +234,12 @@ def summarize(rows: List[dict]) -> Dict[str, object]:
     graded = [r for r in rows
               if r.get("matched") and r.get("gt") not in (None, UNKNOWN)]
 
+    # Hitung berapa baris yang vonis prediksinya X dan ground truth-nya Y.
     def count(pred_status: str, gt_status: str) -> int:
         return sum(1 for r in graded
                    if r["pred"] == pred_status and r["gt"] == gt_status)
 
+    # Precision satu status vonis: dari semua yang divonis X, berapa % benar.
     def precision(pred_status: str, correct_gt: str) -> Optional[float]:
         total = sum(1 for r in graded if r["pred"] == pred_status)
         if total == 0:

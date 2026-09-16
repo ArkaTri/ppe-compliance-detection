@@ -148,6 +148,13 @@ def sensitivity_sweep(boxes_df: pd.DataFrame,
 
 
 def run(cfg: EDAConfig, boxes_df: pd.DataFrame) -> dict:
+    """
+    Titik masuk modul association — jantung keputusan proyek ini.
+
+    Menghitung person_coverage & attach_rate, lalu memutuskan verdict
+    GO / NO-GO / BERSYARAT untuk arsitektur person-centric berdasarkan
+    ambang di config. Ini yang menentukan apakah training boleh dilanjutkan.
+    """
     if boxes_df.empty or PERSON_CLASS not in set(boxes_df["class_name"]):
         return {
             "feasible": False,

@@ -67,6 +67,7 @@ class WorkerCompliance:
     overall: str
     notes: List[str] = field(default_factory=list)
 
+    # Konversi dataclass ke dict biasa, bbox dibulatkan 1 desimal agar JSON ringkas.
     def to_dict(self) -> dict:
         d = asdict(self)
         d["bbox"] = [round(v, 1) for v in self.bbox]
@@ -86,6 +87,7 @@ def _zone_box(person: Detection, zone: Tuple[float, float]) -> Tuple[float, floa
 
 def _touches_edge(box: Tuple[float, float, float, float],
                   img_w: int, img_h: int, margin: float) -> bool:
+    """Cek apakah suatu wilayah tubuh terpotong tepi frame (di luar margin aman)."""
     x1, y1, x2, y2 = box
     mx, my = margin * img_w, margin * img_h
     return x1 <= mx or y1 <= my or x2 >= img_w - mx or y2 >= img_h - my
@@ -150,6 +152,10 @@ def _assess_absent(part: str, worker: Worker, all_persons: List[Detection],
 
 def _assess_part(part: str, worker: Worker, all_persons: List[Detection],
                  img_w: int, img_h: int, cfg: InferenceConfig) -> PartStatus:
+    """
+    Vonis satu bagian tubuh (head/torso): patuh, melanggar (jalur A eksplisit),
+    atau lanjut ke _assess_absent() bila tidak ada APD terasosiasi sama sekali.
+    """
     det: Optional[Detection] = worker.head if part == "head" else worker.torso
     positive = HEAD_POSITIVE if part == "head" else TORSO_POSITIVE
     negative = HEAD_NEGATIVE if part == "head" else TORSO_NEGATIVE

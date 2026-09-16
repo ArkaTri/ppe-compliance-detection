@@ -14,6 +14,10 @@ import numpy as np
 
 
 def iou_matrix(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """
+    Hitung IoU antara semua pasangan box A dan B sekaligus (vectorized),
+    jauh lebih cepat daripada loop per pasangan saat validasi ratusan gambar.
+    """
     if len(a) == 0 or len(b) == 0:
         return np.zeros((len(a), len(b)), dtype=float)
     ax1, ay1, ax2, ay2 = a[:, 0:1], a[:, 1:2], a[:, 2:3], a[:, 3:4]
@@ -74,6 +78,7 @@ def metrics_at(per_image: List[dict], class_id: int, thr: float) -> Dict[str, fl
     precision = tp / (tp + fp) if (tp + fp) else 0.0
     recall = tp / n_gt if n_gt else 0.0
 
+    # F-beta: beta=1 seimbangkan precision & recall, beta=2 bobot recall 2x lipat.
     def fbeta(beta: float) -> float:
         b2 = beta * beta
         d = b2 * precision + recall
@@ -88,5 +93,6 @@ def metrics_at(per_image: List[dict], class_id: int, thr: float) -> Dict[str, fl
 def sweep_thresholds(per_image: List[dict], class_id: int,
                      start: float = 0.05, stop: float = 0.90,
                      step: float = 0.05) -> List[Dict[str, float]]:
+    """Hitung precision/recall pada rentang threshold untuk mencari titik optimal."""
     return [metrics_at(per_image, class_id, float(t))
             for t in np.arange(start, stop + 1e-9, step)]

@@ -49,11 +49,13 @@ class Detection:
     xyxy: Tuple[float, float, float, float]
 
     @property
+    # Luas box dalam piksel², dipakai untuk hitung containment ratio.
     def area(self) -> float:
         x1, y1, x2, y2 = self.xyxy
         return max(0.0, x2 - x1) * max(0.0, y2 - y1)
 
     @property
+    # Koordinat Y titik tengah box — dipakai untuk cek posisi vertikal APD.
     def center_y(self) -> float:
         return (self.xyxy[1] + self.xyxy[3]) / 2
 

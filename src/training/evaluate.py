@@ -181,6 +181,7 @@ def metrics_at(per_image: List[dict], class_id: int, thr: float) -> Dict[str, fl
     precision = tp / (tp + fp) if (tp + fp) else 0.0
     recall = tp / n_gt if n_gt else 0.0
 
+    # F-beta: beta=1 seimbang, beta=2 membobot recall (dipakai untuk kelas pelanggaran).
     def fbeta(beta: float) -> float:
         b2 = beta * beta
         denom = b2 * precision + recall
@@ -199,6 +200,7 @@ def metrics_at(per_image: List[dict], class_id: int, thr: float) -> Dict[str, fl
 def sweep_thresholds(per_image: List[dict], class_id: int,
                      start: float = 0.05, stop: float = 0.90,
                      step: float = 0.05) -> List[Dict[str, float]]:
+    """Hitung precision/recall pada rentang threshold, dasar penentuan threshold optimal."""
     thrs = np.arange(start, stop + 1e-9, step)
     return [metrics_at(per_image, class_id, float(t)) for t in thrs]
 

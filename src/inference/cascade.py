@@ -67,6 +67,7 @@ def _to_bgr(arr: np.ndarray) -> np.ndarray:
     return np.ascontiguousarray(arr[..., ::-1])
 
 def _group_of(class_name: str) -> Optional[int]:
+    """Cari indeks grup eksklusif (head/torso) tempat sebuah kelas berada."""
     for i, group in enumerate(EXCLUSIVE_GROUPS):
         if class_name in group:
             return i
@@ -74,6 +75,7 @@ def _group_of(class_name: str) -> Optional[int]:
 
 
 def iou(a: Sequence[float], b: Sequence[float]) -> float:
+    """Intersection-over-Union standar — dipakai untuk NMS antar grup eksklusif."""
     iw = min(a[2], b[2]) - max(a[0], b[0])
     ih = min(a[3], b[3]) - max(a[1], b[1])
     if iw <= 0 or ih <= 0:

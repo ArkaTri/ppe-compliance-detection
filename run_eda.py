@@ -27,6 +27,7 @@ from eda import association, distribution, geometry, integrity, loader, report, 
 
 
 def parse_args() -> argparse.Namespace:
+    """Definisikan dan baca argumen command-line untuk pipeline EDA."""
     p = argparse.ArgumentParser(description="EDA dataset Construction Safety (format YOLO)")
     p.add_argument("--dataset-root", required=True,
                    help="Folder yang memuat data.yaml serta train/valid/test")
@@ -40,6 +41,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """
+    Orchestrator utama: jalankan ke-6 tahap EDA berurutan (load -> integrity ->
+    distribution -> geometry -> association -> visualize -> report), lalu cetak
+    ringkasan verdict ke terminal.
+    """
     args = parse_args()
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,

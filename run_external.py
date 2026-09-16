@@ -36,6 +36,10 @@ from training.external_data import (  # noqa: E402
 
 
 def parse_map(text: str) -> dict:
+    """
+    Parse string mapping kelas dari CLI, format "NamaAsal=NamaTarget,...".
+    Nilai "none"/"drop" berarti kelas tersebut dibuang, tidak dipetakan.
+    """
     out = {}
     for pair in text.split(","):
         if not pair.strip():
@@ -46,6 +50,11 @@ def parse_map(text: str) -> dict:
 
 
 def main() -> int:
+    """
+    Entry point CLI dengan 3 sub-perintah: audit (cari duplikat), inspect
+    (lihat taksonomi kelas sumber eksternal), merge (gabungkan ke dataset utama
+    dengan proteksi anti-kebocoran ke valid/test).
+    """
     ap = argparse.ArgumentParser(description="Alat bantu dataset eksternal")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
